@@ -1,74 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minecraft Plugin Database</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minecraft Plugin Database</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Custom styles */
+    #results .card {
+      margin-bottom: 15px;
+    }
+  </style>
 </head>
 <body>
-    <div class="container my-5">
-        <h1 class="text-center">Minecraft Plugin Database</h1>
-        <form id="searchForm" class="mb-4">
-            <div class="row">
-                <div class="col-md-6">
-                    <input type="text" class="form-control" id="searchKeyword" placeholder="Search by keyword...">
-                </div>
-                <div class="col-md-4">
-                    <select id="category" class="form-select">
-                        <option value="">Select a Category</option>
-                        <option value="Economy">Economy</option>
-                        <option value="Mini-games">Mini-games</option>
-                        <option value="Admin Tools">Admin Tools</option>
-                        <option value="World Management">World Management</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <button type="button" class="btn btn-primary w-100" onclick="searchPlugins()">Search</button>
-                </div>
-            </div>
-        </form>
-        <div id="results" class="row g-3"></div>
+  <div class="container mt-5">
+    <h1>Minecraft Plugin Database</h1>
+    
+    <!-- Search Form -->
+    <form id="searchForm" class="mb-4">
+      <div class="row">
+        <div class="col">
+          <input type="text" id="searchKeyword" class="form-control" placeholder="Search for plugins">
+        </div>
+        <div class="col">
+          <select id="category" class="form-control">
+            <option value="">Select Category</option>
+            <option value="World">World</option>
+            <option value="PvP">PvP</option>
+            <option value="Economy">Economy</option>
+            <!-- Add more categories as needed -->
+          </select>
+        </div>
+        <div class="col-auto">
+          <button type="button" class="btn btn-primary" onclick="searchPlugins()">Search</button>
+        </div>
+      </div>
+    </form>
+
+    <!-- Results Section -->
+    <div id="results">
+      <!-- Plugin cards will be injected here -->
     </div>
+  </div>
 
-    <script>
-        async function searchPlugins() {
-            const keyword = document.getElementById('searchKeyword').value.toLowerCase();
-            const category = document.getElementById('category').value;
+  <!-- Bootstrap JS (optional for interactivity) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
-            // Fetch the plugins.json file
-            const response = await fetch('plugins.json');
-            const plugins = await response.json();
+  <script>
+    // Simulate fetching plugin data and displaying cards
+    function searchPlugins() {
+      const searchKeyword = document.getElementById('searchKeyword').value.trim();
+      const category = document.getElementById('category').value;
 
-            // Filter plugins based on search inputs
-            const filteredPlugins = plugins.filter(plugin => {
-                const matchesKeyword = plugin.name.toLowerCase().includes(keyword) || plugin.description.toLowerCase().includes(keyword);
-                const matchesCategory = category ? plugin.category === category : true;
-                return matchesKeyword && matchesCategory;
-            });
+      // Example of simulated plugin data (this can come from an API or a static list)
+      const plugins = [
+        { name: "Plugin 1", description: "A great plugin for World gameplay", category: "World" },
+        { name: "Plugin 2", description: "Enhances PvP battles", category: "PvP" },
+        { name: "Plugin 3", description: "Economic plugin for Minecraft", category: "Economy" },
+        // Add more plugins here
+      ];
 
-            // Display results
-            const results = document.getElementById('results');
-            results.innerHTML = '';
-            if (filteredPlugins.length === 0) {
-                results.innerHTML = '<p class="text-center text-muted">No plugins found.</p>';
-                return;
-            }
-            filteredPlugins.forEach(plugin => {
-                const card = `
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">${plugin.name}</h5>
-                                <p class="card-text">${plugin.description}</p>
-                                <a href="${plugin.download_url}" class="btn btn-primary">Download</a>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                results.innerHTML += card;
-            });
-        }
-    </script>
+      // Filter plugins based on search keyword and category
+      const filteredPlugins = plugins.filter(plugin => {
+        const matchesKeyword = plugin.name.toLowerCase().includes(searchKeyword.toLowerCase());
+        const matchesCategory = category ? plugin.category === category : true;
+        return matchesKeyword && matchesCategory;
+      });
+
+      // Clear previous results
+      const resultsContainer = document.getElementById('results');
+      resultsContainer.innerHTML = '';
+
+      // Display filtered plugins as cards
+      filteredPlugins.forEach(plugin => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="card-body">
+            <h5 class="card-title">${plugin.name}</h5>
+            <p class="card-text">${plugin.description}</p>
+          </div>
+        `;
+        resultsContainer.appendChild(card);
+      });
+
+      // If no results, show message
+      if (filteredPlugins.length === 0) {
+        resultsContainer.innerHTML = '<p>No plugins found.</p>';
+      }
+    }
+  </script>
 </body>
 </html>
