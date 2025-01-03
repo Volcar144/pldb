@@ -19,13 +19,13 @@ jobs:
       with:
         node-version: 18
 
-    - name: Install Puppeteer
+    - name: Install Dependencies
       run: npm install puppeteer
 
     - name: Run HTML Tests
       run: |
-        node -e "
-        const puppeteer = require('puppeteer');
+        node -e '
+        const puppeteer = require("puppeteer");
 
         (async () => {
           const browser = await puppeteer.launch();
@@ -33,49 +33,51 @@ jobs:
 
           try {
             // Load the HTML file
-            await page.goto(`file://${process.cwd()}/index.html`);
+            const filePath = "file://" + process.cwd() + "/index.html";
+            await page.goto(filePath);
 
             // Check if the page title is correct
             const title = await page.title();
-            if (title !== 'Minecraft Plugin Database') {
-              console.error(`❌ Title is incorrect: ${title}`);
+            if (title !== "Minecraft Plugin Database") {
+              console.error("❌ Title is incorrect: " + title);
               process.exit(1);
             } else {
-              console.log(`✅ Title is correct: ${title}`);
+              console.log("✅ Title is correct: " + title);
             }
 
             // Check if the search form exists
-            const formExists = await page.$('#searchForm') !== null;
+            const formExists = (await page.$("#searchForm")) !== null;
             if (!formExists) {
-              console.error('❌ Search form is missing.');
+              console.error("❌ Search form is missing.");
               process.exit(1);
             } else {
-              console.log('✅ Search form exists.');
+              console.log("✅ Search form exists.");
             }
 
-            // Check if JSON data loads correctly
+            // Simulate a search and check for plugin cards
             await page.evaluate(() => {
-              document.getElementById('searchKeyword').value = '';
-              document.getElementById('category').value = '';
+              document.getElementById("searchKeyword").value = "";
+              document.getElementById("category").value = "";
             });
-            await page.click('button.btn-primary');
+            await page.click("button.btn-primary");
 
             // Wait for results to populate
-            await page.waitForSelector('#results .card', { timeout: 5000 });
-            const resultsCount = await page.$$eval('#results .card', cards => cards.length);
+            await page.waitForSelector("#results .card", { timeout: 5000 });
+            const resultsCount = await page.$$eval("#results .card", (cards) => cards.length);
 
             if (resultsCount > 0) {
-              console.log(`✅ Found ${resultsCount} plugin cards.`);
+              console.log("✅ Found " + resultsCount + " plugin cards.");
             } else {
-              console.error('❌ No plugin cards were found.');
+              console.error("❌ No plugin cards were found.");
               process.exit(1);
             }
 
           } catch (err) {
-            console.error(`❌ Test failed: ${err.message}`);
+            console.error("❌ Test failed: " + err.message);
             process.exit(1);
           } finally {
             await browser.close();
           }
         })();
-        "
+        '
+
