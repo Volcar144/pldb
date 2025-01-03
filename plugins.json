@@ -1,1 +1,24 @@
+[
+    {
+        "id": 1,
+        "name": "Vault",
+        "description": "Essential economy handling.",
+        "category": "Economy",
+        "download_url": "https://example.com/vault"
+    },
+    {
+        "id": 2,
+        "name": "EssentialsX",
+        "description": "Core server commands.",
+        "category": "Admin Tools",
+        "download_url": "https://example.com/essentialsx"
+    },
+    {
+        "id": 3,
+        "name": "WorldEdit",
+        "description": "In-game world editing tool.",
+        "category": "World Management",
+        "download_url": "https://example.com/worldedit"
+    }
+]
 
