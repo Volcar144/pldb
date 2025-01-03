@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plugin Database</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container my-5">
+        <h1 class="text-center">Minecraft Plugin Database</h1>
+        <form id="searchForm" class="mb-4">
+            <div class="row">
+                <div class="col-md-6">
+                    <input type="text" class="form-control" id="searchKeyword" placeholder="Search by keyword...">
+                </div>
+                <div class="col-md-4">
+                    <select id="category" class="form-select">
+                        <option value="">Select a Category</option>
+                        <option value="Economy">Economy</option>
+                        <option value="Mini-games">Mini-games</option>
+                        <option value="Admin Tools">Admin Tools</option>
+                        <option value="World Management">World Management</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-primary w-100" onclick="searchPlugins()">Search</button>
+                </div>
+            </div>
+        </form>
+        <div id="results" class="row g-3"></div>
+    </div>
+
+    <script>
+        async function searchPlugins() {
+            const keyword = document.getElementById('searchKeyword').value.toLowerCase();
+            const category = document.getElementById('category').value;
+
+            // Fetch the plugins.json file
+            const response = await fetch('plugins.json');
+            const plugins = await response.json();
+
+            // Filter plugins based on search inputs
+            const filteredPlugins = plugins.filter(plugin => {
+                const matchesKeyword = plugin.name.toLowerCase().includes(keyword) || plugin.description.toLowerCase().includes(keyword);
+                const matchesCategory = category ? plugin.category === category : true;
+                return matchesKeyword && matchesCategory;
+            });
+
+            // Display results
+            const results = document.getElementById('results');
+            results.innerHTML = '';
+            if (filteredPlugins.length === 0) {
+                results.innerHTML = '<p class="text-center text-muted">No plugins found.</p>';
+                return;
+            }
+            filteredPlugins.forEach(plugin => {
+                const card = `
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">${plugin.name}</h5>
+                                <p class="card-text">${plugin.description}</p>
+                                <a href="${plugin.download_url}" class="btn btn-primary">Download</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                results.innerHTML += card;
+            });
+        }
+    </script>
+</body>
+</html>
